@@ -2,6 +2,7 @@ const Profile = require('../models/Profile');
 const User = require('../models/User');
 const { processResume } = require('../services/resumeService');
 const { processGithub } = require('../services/githubService');
+const { extractProjectSkills } = require('../services/geminiService');
 
 const uniqueClean = (values = []) => [
   ...new Set(values.map((value) => String(value).trim()).filter(Boolean)),
@@ -211,6 +212,36 @@ const addGithubSkills = async (req, res) => {
 };
 
 /**
+ * POST /api/skills/project-suggestions
+ * Body: { description }
+ */
+const suggestProjectSkills = async (req, res) => {
+  try {
+    const { description } = req.body;
+
+    if (!description || description.trim().length < 20) {
+      return res.status(400).json({ error: 'Project description must be at least 20 characters' });
+    }
+
+    const skills = await extractProjectSkills(description);
+
+    if (skills.length === 0) {
+      return res.status(422).json({
+        error: 'Could not extract project skills. Add more technical detail and try again.',
+      });
+    }
+
+    return res.json({
+      success: true,
+      suggestedSkills: skills,
+    });
+  } catch (err) {
+    console.error('[Project Skills] Error:', err.message);
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+/**
  * GET /api/skills/profile/:userId
  */
 const getProfile = async (req, res) => {
@@ -288,6 +319,7 @@ module.exports = {
   addManualSkills,
   addResumeSkills,
   addGithubSkills,
+  suggestProjectSkills,
   getProfile,
   updateProfile,
   removeSkill,

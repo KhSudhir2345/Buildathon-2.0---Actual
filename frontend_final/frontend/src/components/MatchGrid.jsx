@@ -6,6 +6,12 @@ export default function MatchGrid({ currentUserId, onViewProfile }) {
   const [loading, setLoading] = useState(true);
   const [requestedIds, setRequestedIds] = useState([]);
   const [searchSkills, setSearchSkills] = useState('');
+  const [searchMode, setSearchMode] = useState('manual');
+  const [projectDescription, setProjectDescription] = useState('');
+  const [suggestedSkills, setSuggestedSkills] = useState([]);
+  const [selectedProjectSkills, setSelectedProjectSkills] = useState([]);
+  const [projectLoading, setProjectLoading] = useState(false);
+  const [projectError, setProjectError] = useState('');
 
     const getConnectionLabel = (status) => {
     switch (status) {
@@ -47,6 +53,45 @@ export default function MatchGrid({ currentUserId, onViewProfile }) {
     fetchDevelopers(searchSkills);
   };
 
+  const handleProjectSuggestions = async (event) => {
+    event.preventDefault();
+    setProjectLoading(true);
+    setProjectError('');
+    setSuggestedSkills([]);
+    setSelectedProjectSkills([]);
+
+    try {
+      const { data } = await axios.post('http://localhost:5000/api/skills/project-suggestions', {
+        description: projectDescription,
+      });
+      const skills = data.suggestedSkills || [];
+      setSuggestedSkills(skills);
+      setSelectedProjectSkills(skills.slice(0, Math.min(skills.length, 6)));
+    } catch (err) {
+      setProjectError(err.response?.data?.error || 'Could not suggest skills from this project.');
+    } finally {
+      setProjectLoading(false);
+    }
+  };
+
+  const toggleProjectSkill = (skill) => {
+    setSelectedProjectSkills((current) =>
+      current.includes(skill)
+        ? current.filter((item) => item !== skill)
+        : [...current, skill]
+    );
+  };
+
+  const handleProjectSearch = () => {
+    if (selectedProjectSkills.length === 0) {
+      setProjectError('Select at least one suggested skill to search.');
+      return;
+    }
+
+    setProjectError('');
+    fetchDevelopers(selectedProjectSkills.join(', '));
+  };
+
   const handleConnect = async (receiverId) => {
     try {
       // Fire the handshake logic we built in the backend
@@ -67,18 +112,105 @@ export default function MatchGrid({ currentUserId, onViewProfile }) {
 
   return (
     <div className="space-y-6">
-      <form onSubmit={handleSearch} className="bg-charcoal-800/95 border border-charcoal-700 rounded-xl p-4 flex flex-col sm:flex-row gap-3 shadow-lg">
-        <input
-          type="text"
-          value={searchSkills}
-          onChange={(event) => setSearchSkills(event.target.value)}
-          className="flex-1 bg-charcoal-900 p-3 rounded text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 font-mono"
-          placeholder="Search skills: React, Python, MongoDB"
-        />
-        <button type="submit" className="bg-forest-900 hover:bg-forest-800 text-white font-bold px-6 py-3 rounded transition-colors">
-          Rank Developers
-        </button>
-      </form>
+      <div className="bg-charcoal-800/95 border border-charcoal-700 rounded-xl p-4 shadow-lg space-y-4">
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setSearchMode('manual')}
+            className={`px-4 py-2 rounded font-bold transition-colors border ${
+              searchMode === 'manual'
+                ? 'bg-forest-900 border-forest-800 text-white'
+                : 'bg-charcoal-900 border-charcoal-600 text-gray-400 hover:text-gray-200'
+            }`}
+          >
+            Manual Skills
+          </button>
+          <button
+            type="button"
+            onClick={() => setSearchMode('project')}
+            className={`px-4 py-2 rounded font-bold transition-colors border ${
+              searchMode === 'project'
+                ? 'bg-forest-900 border-forest-800 text-white'
+                : 'bg-charcoal-900 border-charcoal-600 text-gray-400 hover:text-gray-200'
+            }`}
+          >
+            Project Description
+          </button>
+        </div>
+
+        {searchMode === 'manual' ? (
+          <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3">
+            <input
+              type="text"
+              value={searchSkills}
+              onChange={(event) => setSearchSkills(event.target.value)}
+              className="flex-1 bg-charcoal-900 p-3 rounded text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 font-mono"
+              placeholder="Search skills: React, Python, MongoDB"
+            />
+            <button type="submit" className="bg-forest-900 hover:bg-forest-800 text-white font-bold px-6 py-3 rounded transition-colors">
+              Rank Developers
+            </button>
+          </form>
+        ) : (
+          <div className="space-y-4">
+            <form onSubmit={handleProjectSuggestions} className="space-y-3">
+              <textarea
+                value={projectDescription}
+                onChange={(event) => setProjectDescription(event.target.value)}
+                className="w-full bg-charcoal-900 p-3 rounded text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 font-mono min-h-28 resize-none"
+                placeholder="Describe your project: real-time chat app with authentication, resume parsing, AI summaries..."
+                minLength={20}
+                required
+              />
+              <button
+                type="submit"
+                disabled={projectLoading}
+                className="bg-forest-900 hover:bg-forest-800 disabled:opacity-50 text-white font-bold px-6 py-3 rounded transition-colors"
+              >
+                {projectLoading ? 'Extracting Skills...' : 'Suggest Skills'}
+              </button>
+            </form>
+
+            {projectError && (
+              <div className="text-sm text-red-300 border border-red-900 bg-red-950/40 rounded px-3 py-2">
+                {projectError}
+              </div>
+            )}
+
+            {suggestedSkills.length > 0 && (
+              <div className="space-y-3 border-t border-charcoal-700 pt-4">
+                <div className="flex flex-wrap gap-2">
+                  {suggestedSkills.map((skill) => {
+                    const selected = selectedProjectSkills.includes(skill);
+                    return (
+                      <button
+                        key={skill}
+                        type="button"
+                        onClick={() => toggleProjectSkill(skill)}
+                        className={`px-3 py-2 rounded-full text-sm font-semibold border transition-colors ${
+                          selected
+                            ? 'bg-forest-900 border-forest-700 text-white'
+                            : 'bg-charcoal-900 border-charcoal-600 text-gray-400 hover:text-gray-200'
+                        }`}
+                      >
+                        {selected ? '[x] ' : '+ '}
+                        {skill}
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  type="button"
+                  onClick={handleProjectSearch}
+                  className="bg-forest-900 hover:bg-forest-800 text-white font-bold px-6 py-3 rounded transition-colors"
+                >
+                  Rank Developers by Selected Skills
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {loading ? (
         <div className="text-center py-20 text-forest-400 font-mono animate-pulse">Scanning mainframe for developers...</div>

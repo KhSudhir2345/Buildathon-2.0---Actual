@@ -5,6 +5,7 @@ const {
   addManualSkills,
   addResumeSkills,
   addGithubSkills,
+  suggestProjectSkills,
   getProfile,
   updateProfile,
   removeSkill,
@@ -26,6 +27,11 @@ router.post('/resume', upload.single('resume'), addResumeSkills);
 // POST /api/skills/github
 // Body: { userId, username: "torvalds" }
 router.post('/github', addGithubSkills);
+
+// Option 4: Project description -> Gemini suggested search skills
+// POST /api/skills/project-suggestions
+// Body: { description: "I am building..." }
+router.post('/project-suggestions', suggestProjectSkills);
 
 // --- Profile CRUD Routes ---
 
