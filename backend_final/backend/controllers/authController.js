@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 const generateToken = (userId) => (
-  jwt.sign({ id: userId }, process.env.JWT_SECRET || 'devtinder-local-secret', {
+  jwt.sign({ id: userId }, process.env.JWT_SECRET || 'stackconnect-local-secret', {
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   })
 );

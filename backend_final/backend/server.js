@@ -45,7 +45,7 @@ const userRoutes = require('./routes/userRoutes');
 app.use('/api/users', userRoutes);
 
 app.get('/', (req, res) => {
-  res.json({ message: 'DevTinder API, Auth, Ranked Discovery, and WebSockets running' });
+  res.json({ message: 'StackConnect API, Auth, Ranked Discovery, and WebSockets running' });
 });
 // --- THE REAL-TIME CHAT LOGIC (SOCKET.IO) ---
 io.on('connection', (socket) => {

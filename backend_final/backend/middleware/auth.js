@@ -10,7 +10,7 @@ exports.protect = async (req, res, next) => {
       return res.status(401).json({ success: false, message: 'Not authorized, no token provided' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'devtinder-local-secret');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'stackconnect-local-secret');
     const user = await User.findById(decoded.id);
 
     if (!user) {

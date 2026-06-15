@@ -250,7 +250,7 @@ export default function App() {
 
             {/* Side Info - Optional */}
             <div className="mt-12 text-center max-w-md">
-              <h3 className="text-forest-400 font-bold text-lg mb-3">Why DevTinder?</h3>
+              <h3 className="text-forest-400 font-bold text-lg mb-3">Why StackConnect?</h3>
               <div className="grid grid-cols-3 gap-4 text-sm text-gray-400">
                 <div className="space-y-1">
                   <p className="text-forest-300 font-bold">⚡ Fast</p>
@@ -329,7 +329,7 @@ export default function App() {
           
           {/* Top Navigation Bar */}
           <header className="flex justify-between items-center pb-4 border-b border-charcoal-700 mb-8 mt-2 bg-charcoal-900/80 p-4 rounded-xl backdrop-blur-sm shadow-lg">
-            <h1 className="text-2xl font-bold text-forest-400 tracking-wider">DEV<span className="text-gray-500">TINDER</span></h1>
+            <h1 className="text-2xl font-bold text-forest-400 tracking-wider">STACK<span className="text-gray-500">CONNECT</span></h1>
             
             {currentUserId && (
               <nav className="flex gap-6 items-center bg-charcoal-800/80 backdrop-blur-sm px-6 py-3 rounded-xl border border-charcoal-700 shadow-lg">
