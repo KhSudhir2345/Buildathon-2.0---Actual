@@ -397,11 +397,22 @@ exports.updateProfile = async (req, res) => {
     if (updates.username && !updates.name) updates.name = updates.username;
 
     ['techStack', 'topSkills', 'lookingFor'].forEach((field) => {
-      if (updates[field] !== undefined && !Array.isArray(updates[field])) {
-        updates[field] = String(updates[field])
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean);
+      if (updates[field] !== undefined) {
+        // Handle both string and array inputs
+        let fieldsArray = Array.isArray(updates[field]) 
+          ? updates[field] 
+          : String(updates[field]).split(',');
+        
+        // Split any elements that contain commas
+        fieldsArray = fieldsArray
+          .flatMap((item) => 
+            String(item)
+              .split(',')
+              .map((s) => s.trim())
+              .filter(Boolean)
+          );
+        
+        updates[field] = fieldsArray;
       }
       if (updates[field]) updates[field] = cleanList(updates[field]);
     });

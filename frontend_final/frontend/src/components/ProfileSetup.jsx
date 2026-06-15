@@ -86,8 +86,17 @@ function ManualTab({ userId, profileFields, onSuccess }) {
 
   const addSkill = () => {
     const trimmed = input.trim();
-    if (!trimmed || skills.includes(trimmed)) return;
-    setSkills((current) => [...current, trimmed]);
+    if (!trimmed) return;
+    
+    // Split by comma and add each skill individually
+    const newSkills = trimmed
+      .split(',')
+      .map(skill => skill.trim())
+      .filter(skill => skill && !skills.includes(skill));
+    
+    if (newSkills.length > 0) {
+      setSkills((current) => [...current, ...newSkills]);
+    }
     setInput('');
   };
 
@@ -392,6 +401,26 @@ export default function ProfileSetup({ currentUserId, onComplete }) {
     setSelectedTopSkills(updatedTopSkills);
   };
 
+  const handleRemoveSkill = async (skillToRemove) => {
+    if (!userId) return;
+
+    const updatedSkills = savedSkills.filter((skill) => skill !== skillToRemove);
+    const updatedTopSkills = selectedTopSkills.filter((skill) => skill !== skillToRemove);
+
+    try {
+      const { data } = await axios.put(`${API_BASE}/users/${userId}`, {
+        techStack: updatedSkills,
+        topSkills: updatedTopSkills,
+      });
+      setProfile(data);
+      setUser(data);
+      setSelectedTopSkills(updatedTopSkills);
+      setStatus({ type: 'success', message: `Removed ${skillToRemove}` });
+    } catch (error) {
+      setStatus({ type: 'error', message: error.response?.data?.error || 'Failed to remove skill' });
+    }
+  };
+
   const savedSkills = profile?.techStack || profile?.skills || [];
   const userId = user?._id || currentUserId;
 
@@ -499,7 +528,7 @@ export default function ProfileSetup({ currentUserId, onComplete }) {
           </div>
           <div className="flex flex-wrap gap-2">
             {savedSkills.map((skill) => (
-              <SkillBadge key={skill} skill={skill} />
+              <SkillBadge key={skill} skill={skill} onRemove={() => handleRemoveSkill(skill)} />
             ))}
           </div>
 
