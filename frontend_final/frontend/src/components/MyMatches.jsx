@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react';
+import AvatarBadge from './AvatarBadge';
+import StatusDot from './StatusDot';
+import { MessageSquare, Star } from 'lucide-react';
 import axios from 'axios';
 
 const API_BASE = 'http://localhost:5000/api';
@@ -81,47 +84,56 @@ export default function MyMatches({ currentUserId, onOpenChat }) {
 
   return (
     <div className="max-w-3xl mx-auto space-y-4">
-      <h2 className="text-xl font-bold text-gray-200 border-b border-charcoal-700 pb-2 mb-6">Established Connections</h2>
+    <div className="bg-charcoal-800/80 backdrop-blur-sm border border-charcoal-700 rounded-xl p-6 card-hover shadow-lg">
+      <h2 className="text-2xl font-bold text-forest-400">Your Matches</h2>
+      <p className="text-gray-400 text-sm mt-1">Connect and collaborate with {matches.length} developers</p>
+    </div>
 
       {matches.length === 0 ? (
-        <div className="text-center py-16 bg-charcoal-800 border border-charcoal-700 rounded-lg text-gray-500 font-mono">
-          No matches yet. Keep swiping!
+        <div className="text-center py-16 bg-charcoal-800/80 backdrop-blur-sm border border-charcoal-700 rounded-xl text-gray-400 font-mono">
+          <div className="text-4xl mb-4">🔍</div>
+          <p>No matches yet. Keep discovering developers!</p>
         </div>
       ) : (
-        matches.map((match) => {
+        matches.map((match,idx) => {
           const otherUser = match.senderId._id === currentUserId ? match.receiverId : match.senderId;
 
           return (
-            <div key={match._id} className="bg-charcoal-800 border border-charcoal-600 rounded-lg p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 hover:border-forest-800 transition-colors shadow-md">
-              <div>
-                <h3 className="text-lg font-bold text-gray-200">{otherUser.username}</h3>
-                {otherUser.githubHandle && (
-                  <div className="text-xs font-mono text-gray-400 mt-1">
-                    GitHub: <span className="text-forest-400">{otherUser.githubHandle}</span>
+            <div key={match._id} className="bg-charcoal-800/80 backdrop-blur-sm border border-charcoal-700 rounded-xl p-6 hover:border-forest-400 transition-all shadow-lg card-hover group" style={{ animationDelay: `${idx * 0.05}s`, animation: 'fadeInUp 0.5s ease-out' }}>
+              <div className="flex items-start gap-4 mb-4">
+                <div className="relative flex-shrink-0">
+                  <AvatarBadge name={otherUser.username} size="lg" />
+                  <StatusDot online={true} size="md" className="absolute -bottom-1 -right-1" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg font-bold text-gray-100">{otherUser.username}</h3>
+                  {otherUser.githubHandle && (
+                    <div className="text-xs font-mono text-gray-400 mt-1">
+                      GitHub: <span className="text-forest-400">{otherUser.githubHandle}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 mt-2 text-sm text-gray-400">
+                    <span>
+                      {otherUser.ratingAverage?.toFixed(1) || 0} / 5
+                    </span>
+                    <span className="text-gray-500">·</span>
+                    <span>{otherUser.ratingCount || 0} rating{(otherUser.ratingCount || 0) === 1 ? '' : 's'}</span>
                   </div>
-                )}
-                <div className="flex items-center gap-2 mt-2 text-sm text-gray-400">
-                  <span>
-                    {otherUser.ratingAverage?.toFixed(1) || 0} / 5
-                  </span>
-                  <span className="text-gray-500">·</span>
-                  <span>{otherUser.ratingCount || 0} rating{(otherUser.ratingCount || 0) === 1 ? '' : 's'}</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 w-full md:w-auto">
-                <button
-                  onClick={() => onOpenChat(match._id)}
-                  className="py-2 rounded font-bold transition-all border border-charcoal-600 text-gray-300 hover:border-forest-800 hover:text-forest-400"
-                >
-                  Open Terminal (Chat)
-                </button>
-
+              <div className="mt-4 flex gap-3">
                 <button
                   onClick={() => openRatingModal(otherUser)}
-                  className="py-2 rounded font-bold bg-forest-900 hover:bg-forest-800 text-white shadow-md"
+                  className="flex-1 bg-charcoal-900 hover:bg-charcoal-700 border border-charcoal-600 hover:border-amber-400 px-3 py-2 rounded-lg text-sm text-gray-300 transition-all"
                 >
-                  Rate the User
+                  <Star size={16} className="inline mr-1" /> Rate
+                </button>
+                <button
+                  onClick={() => onOpenChat(match._id)}
+                  className="flex-1 bg-gradient-to-r from-forest-800 to-forest-900 hover:from-forest-700 hover:to-forest-800 px-3 py-2 rounded-lg text-sm text-white font-semibold transition-all hover:shadow-lg hover:shadow-forest-400/20"
+                >
+                  <MessageSquare size={16} className="inline mr-1" /> Chat
                 </button>
               </div>
             </div>
@@ -130,9 +142,9 @@ export default function MyMatches({ currentUserId, onOpenChat }) {
       )}
 
       {ratingModal.open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md bg-charcoal-900 border border-charcoal-700 rounded-xl p-6 shadow-2xl">
-            <h3 className="text-xl font-bold text-gray-100 mb-3">Rate {ratingModal.user.username}</h3>
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-charcoal-800/95 backdrop-blur-md border border-charcoal-700 rounded-2xl p-8 shadow-2xl w-96 card-hover">
+            <h3 className="text-2xl font-bold text-forest-400 mb-6">Rate {ratingModal.user?.username}</h3>
             <p className="text-sm text-gray-400 mb-4">
               Give a score from 1 to 5 stars. Your rating helps other developers choose stronger matches.
             </p>

@@ -124,10 +124,12 @@ export default function App() {
   // --- COMPONENT ROUTER ---
   const renderView = () => {
     switch (currentView) {
-      case 'login':
-        return (
-          <div className="flex flex-col items-center justify-center h-96">
-            <div className="bg-charcoal-800 p-8 rounded-lg border border-charcoal-700 shadow-xl w-96">
+    case 'login':
+      return (
+        <div className="flex flex-col items-center justify-center h-screen">
+          <div className="bg-charcoal-800/95 backdrop-blur-md p-8 rounded-2xl border border-charcoal-700 shadow-2xl w-96 card-hover relative">
+            {/* Glow effect background */}
+            <div className="absolute inset-0 bg-forest-400/5 rounded-2xl pointer-events-none" style={{filter: 'blur(20px)'}} />
               <h2 className="text-forest-400 text-xl font-bold mb-6 text-center tracking-wide">
                 {authMode === 'login' ? 'SYSTEM ACCESS' : 'CREATE ACCESS'}
               </h2>
@@ -135,7 +137,7 @@ export default function App() {
                 {authMode === 'signup' && (
                   <input
                     name="name"
-                    className="bg-charcoal-900 p-3 rounded text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 font-mono"
+                    className="bg-charcoal-900 p-3 rounded-lg text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 focus:ring-1 focus:ring-forest-400/50 font-mono transition-all"
                     placeholder="Display name"
                     required
                   />
@@ -143,7 +145,7 @@ export default function App() {
                 <input
                   name="email"
                   type="email"
-                  className="bg-charcoal-900 p-3 rounded text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 font-mono" 
+                  className="bg-charcoal-900 p-3 rounded-lg text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 focus:ring-1 focus:ring-forest-400/50 font-mono transition-all"
                   placeholder="Email"
                   required
                 />
@@ -151,7 +153,7 @@ export default function App() {
                   name="password"
                   type="password"
                   minLength={6}
-                  className="bg-charcoal-900 p-3 rounded text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 font-mono"
+                  className="bg-charcoal-900 p-3 rounded-lg text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 focus:ring-1 focus:ring-forest-400/50 font-mono transition-all"
                   placeholder="Password"
                   required
                 />
@@ -159,7 +161,7 @@ export default function App() {
                   <>
                     <input
                       name="lookingFor"
-                      className="bg-charcoal-900 p-3 rounded text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 font-mono"
+                      className="bg-charcoal-900 p-3 rounded-lg text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 focus:ring-1 focus:ring-forest-400/50 font-mono transition-all"
                       placeholder="Looking for: React, ML, Backend"
                     />
                     <textarea
@@ -170,7 +172,7 @@ export default function App() {
                   </>
                 )}
                 {authStatus && <div className="text-sm text-red-300 border border-red-900 bg-red-950/40 rounded px-3 py-2">{authStatus}</div>}
-                <button type="submit" disabled={authLoading} className="bg-forest-800 hover:bg-forest-900 disabled:opacity-50 px-4 py-3 rounded text-white font-bold transition-colors">
+                <button type="submit" disabled={authLoading} className="w-full bg-gradient-to-r from-forest-800 to-forest-900 hover:from-forest-700 hover:to-forest-800 disabled:opacity-50 px-4 py-3 rounded-lg text-white font-bold transition-all hover:shadow-lg hover:shadow-forest-400/20 disabled:cursor-not-allowed">
                   {authLoading ? 'Authenticating...' : authMode === 'login' ? 'Initialize Session' : 'Create Account'}
                 </button>
               </form>
@@ -180,7 +182,7 @@ export default function App() {
                   setAuthStatus(null);
                   setAuthMode(authMode === 'login' ? 'signup' : 'login');
                 }}
-                className="w-full mt-4 border border-charcoal-600 hover:border-forest-800 px-4 py-3 rounded text-gray-300 font-bold transition-colors"
+                className="w-full mt-4 border border-charcoal-600 hover:border-forest-400 hover:bg-forest-900/10 px-4 py-3 rounded-lg text-gray-300 font-bold transition-all"
               >
                 {authMode === 'login' ? 'Create Developer Account' : 'Use Existing Account'}
               </button>
@@ -251,28 +253,30 @@ export default function App() {
             <h1 className="text-2xl font-bold text-forest-400 tracking-wider">DEV<span className="text-gray-500">TINDER</span></h1>
             
             {currentUserId && (
-              <nav className="flex gap-6 items-center bg-charcoal-800 px-6 py-2 rounded-full border border-charcoal-700">
+              <nav className="flex gap-6 items-center bg-charcoal-800/80 backdrop-blur-sm px-6 py-3 rounded-xl border border-charcoal-700 shadow-lg">
                 <button 
                   onClick={() => setCurrentView('profile')} 
-                  className={`font-semibold transition-colors ${currentView === 'profile' ? 'text-forest-400' : 'text-gray-400 hover:text-gray-200'}`}
+                  className={`font-semibold transition-all px-3 py-1 rounded-lg ${currentView === 'profile' ? 'text-white bg-forest-900 border border-forest-400 shadow-lg shadow-forest-400/20' : 'text-gray-400 hover:text-forest-400'}`}
                 >
                   Profile
                 </button>
                 <button 
                   onClick={() => setCurrentView('grid')} 
-                  className={`font-semibold transition-colors ${currentView === 'grid' ? 'text-forest-400' : 'text-gray-400 hover:text-gray-200'}`}
+                  className={`font-semibold transition-all px-3 py-1 rounded-lg ${currentView === 'profile' ? 'text-white bg-forest-900 border border-forest-400 shadow-lg shadow-forest-400/20' : 'text-gray-400 hover:text-forest-400'}`}
                 >
                   Discover
                 </button>
                 <button 
                   onClick={() => setCurrentView('inbox')} 
-                  className={`font-semibold transition-colors ${currentView === 'inbox' ? 'text-forest-400' : 'text-gray-400 hover:text-gray-200'}`}
+                  className={`font-semibold transition-all px-3 py-1 rounded-lg relative ${currentView === 'inbox' ? 'text-white bg-forest-900 border border-forest-400 shadow-lg shadow-forest-400/20' : 'text-gray-400 hover:text-forest-400'}`}
                 >
                   Inbox
+                  {/* Red notification badge - you'll need to track pending count */}
+                  <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse" />
                 </button>
                 <button 
                   onClick={() => setCurrentView('matches')} 
-                  className={`font-semibold transition-colors ${currentView === 'matches' ? 'text-forest-400' : 'text-gray-400 hover:text-gray-200'}`}
+                  className={`font-semibold transition-all px-3 py-1 rounded-lg ${currentView === 'profile' ? 'text-white bg-forest-900 border border-forest-400 shadow-lg shadow-forest-400/20' : 'text-gray-400 hover:text-forest-400'}`}
                 >
                   Matches
                 </button>

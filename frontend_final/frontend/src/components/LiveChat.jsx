@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
-
+import { Send, X } from 'lucide-react';
 // Connect to the backend exactly once per file load
 const socket = io('http://localhost:5000');
 
@@ -81,50 +81,34 @@ export default function LiveChat({ currentUserId, connectionId, onBack }) {
       </div>
 
       {/* Chat History Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-charcoal-900">
-        {messages.map((msg, idx) => {
-          // Check if this message was sent by the current user
-          const isMe = typeof msg.senderId === 'object' 
-            ? msg.senderId._id === currentUserId 
-            : msg.senderId === currentUserId;
-
-          return (
-            <div key={idx} className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
-              <span className="text-[10px] text-gray-500 mb-1 px-1">
-                {typeof msg.senderId === 'object' ? msg.senderId.username : "User"}
-              </span>
-              <div 
-                className={`max-w-[75%] p-3 rounded-lg text-sm ${
-                  isMe 
-                    ? 'bg-forest-900 text-green-50 border border-forest-800 rounded-br-none' 
-                    : 'bg-charcoal-800 text-gray-300 border border-charcoal-600 rounded-bl-none'
-                }`}
-              >
-                {msg.content}
-              </div>
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-charcoal-900/50">
+        {messages.map((msg, idx) => (
+          <div key={idx} className={`flex ${msg.senderId === currentUserId ? 'justify-end' : 'justify-start'} animate-slideInUp`}>
+            <div className={`max-w-xs px-4 py-3 rounded-xl font-mono text-sm backdrop-blur-sm transition-all ${
+              msg.senderId === currentUserId 
+                ? 'bg-gradient-to-br from-forest-800 to-forest-900 text-white rounded-br-none shadow-lg shadow-forest-400/10' 
+                : 'bg-charcoal-800 text-gray-300 border border-charcoal-700 rounded-bl-none'
+            }`}>
+              {msg.content}
             </div>
-          );
-        })}
-        {/* Invisible div to scroll down to */}
+          </div>
+        ))}
         <div ref={messagesEndRef} />
       </div>
 
       {/* Message Input Form */}
-      <form onSubmit={handleSendMessage} className="p-4 bg-charcoal-800 border-t border-charcoal-700 flex gap-3">
-        <span className="text-forest-400 font-bold self-center">{">"}</span>
-        <input 
-          type="text" 
+      <form onSubmit={handleSendMessage} className="bg-charcoal-800/80 backdrop-blur-sm p-4 border-t border-charcoal-700 flex gap-3">
+        <input
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          className="flex-1 bg-charcoal-900 text-gray-200 border border-charcoal-600 rounded p-2 focus:outline-none focus:border-forest-400"
-          placeholder="Execute message..."
-          autoFocus
+          className="flex-1 bg-charcoal-900 p-3 rounded-lg text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 focus:ring-1 focus:ring-forest-400/50 font-mono text-sm transition-all"
+          placeholder="Type message..."
         />
         <button 
           type="submit" 
-          className="bg-forest-800 hover:bg-forest-900 text-white font-bold px-6 py-2 rounded transition-colors"
+          className="bg-gradient-to-r from-forest-800 to-forest-900 hover:from-forest-700 hover:to-forest-800 px-4 py-3 rounded-lg text-white font-semibold transition-all hover:shadow-lg hover:shadow-forest-400/20"
         >
-          SEND
+          <Send size={18} />
         </button>
       </form>
     </div>

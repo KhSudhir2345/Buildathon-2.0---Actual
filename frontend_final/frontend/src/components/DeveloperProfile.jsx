@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import AvatarBadge from './AvatarBadge';
+import { ArrowLeft, Code, Star } from 'lucide-react';
 import axios from 'axios';
 
 const API_BASE = 'http://localhost:5000/api';
@@ -65,16 +67,32 @@ export default function DeveloperProfile({ userId, currentUserId, onBack, onConn
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <button type="button" onClick={onBack} className="text-gray-400 hover:text-forest-400 text-sm font-semibold">
-        Back to discover
-      </button>
+    <button 
+      type="button" 
+      onClick={onBack} 
+      className="flex items-center gap-2 text-gray-400 hover:text-forest-400 text-sm font-semibold transition-colors group"
+    >
+      <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+      Back to discover
+    </button>
 
       <section className="bg-charcoal-800/95 border border-charcoal-700 rounded-xl p-6 backdrop-blur-sm shadow-xl">
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-5">
-          <div>
-            <h2 className="text-3xl font-bold text-gray-100">{user.username}</h2>
+        <div className="flex flex-col md:flex-row md:items-start md:gap-8">
+          <AvatarBadge name={user.username} size="lg" />
+          <div className="flex-1">
+            <h2 className="text-4xl font-bold text-gray-100 mt-2">{user.username}</h2>
             {user.githubHandle && (
-              <p className="text-sm text-forest-400 mt-2 font-mono">github.com/{user.githubHandle}</p>
+              <div className="flex items-center gap-2 text-sm text-forest-400 mt-3 font-mono">
+                <Code size={16} />
+                <a 
+                  href={`https://github.com/${user.githubHandle}`}
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-forest-300 transition-colors"
+                >
+                  github.com/{user.githubHandle}
+                </a>
+              </div>
             )}
             <div className="flex flex-wrap items-center gap-3 mt-3">
               <div className="flex items-center gap-1 text-amber-300">
@@ -96,13 +114,9 @@ export default function DeveloperProfile({ userId, currentUserId, onBack, onConn
               type="button"
               onClick={handleConnect}
               disabled={requested}
-              className={`px-6 py-3 rounded-lg font-bold ${
-                requested
-                  ? 'bg-charcoal-900 border border-charcoal-600 text-gray-500 cursor-not-allowed'
-                  : 'bg-forest-900 hover:bg-forest-800 text-white'
-              }`}
+              className="bg-gradient-to-r from-forest-800 to-forest-900 hover:from-forest-700 hover:to-forest-800 disabled:opacity-50 disabled:cursor-not-allowed px-8 py-3 rounded-lg text-white font-bold transition-all hover:shadow-lg hover:shadow-forest-400/20"
             >
-              {requested ? 'Request Sent' : 'Connect'}
+              {requested ? '✓ Request Sent' : '+ Connect'}
             </button>
           )}
         </div>

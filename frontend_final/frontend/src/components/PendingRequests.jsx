@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import AvatarBadge from './AvatarBadge';
+import { Check, X } from 'lucide-react';
 import axios from 'axios';
 
 export default function PendingRequests({ currentUserId }) {
@@ -78,8 +80,9 @@ export default function PendingRequests({ currentUserId }) {
             : sender.techStack?.slice(0, 3) || [];
 
           return (
-            <div key={request._id} className="bg-charcoal-800 border border-charcoal-600 rounded-lg p-5 flex items-center justify-between hover:border-forest-800 transition-colors shadow-md">
-              <div>
+            <div key={request._id} className="bg-charcoal-800/80 backdrop-blur-sm border border-charcoal-700 rounded-xl p-5 flex items-center justify-between hover:border-forest-400 transition-all shadow-lg card-hover group animate-slideInRight gap-4">
+              <AvatarBadge name={sender.username} size="lg" />
+              <div className="flex-1">
                 <h3 className="text-lg font-bold text-gray-200">{sender.username}</h3>
                 {sender.githubHandle && (
                   <div className="text-xs font-mono text-gray-400 mt-1">
@@ -96,26 +99,24 @@ export default function PendingRequests({ currentUserId }) {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex gap-2">
                 <button
                   onClick={() => openProfile(request)}
-                  className="bg-charcoal-900 hover:bg-charcoal-700 text-gray-200 font-bold py-2 px-4 rounded transition-colors"
+                  className="bg-charcoal-900 hover:bg-charcoal-700 border border-charcoal-600 hover:border-forest-400 px-3 py-2 rounded-lg text-sm text-gray-300 transition-all"
                 >
-                  View profile
+                  👤 View
                 </button>
-
-                <button
-                  onClick={() => handleReject(request._id)}
-                  className="bg-red-700 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition-colors"
-                >
-                  Reject
-                </button>
-
                 <button
                   onClick={() => handleAccept(request._id)}
-                  className="bg-forest-900 hover:bg-forest-800 text-white font-bold py-2 px-4 rounded transition-colors"
+                  className="bg-gradient-to-r from-forest-800 to-forest-900 hover:from-forest-700 hover:to-forest-800 px-4 py-2 rounded-lg text-sm text-white font-semibold transition-all hover:shadow-lg hover:shadow-forest-400/20"
                 >
-                  Accept
+                  <Check size={16} className="inline mr-1" /> Accept
+                </button>
+                <button
+                  onClick={() => handleReject(request._id)}
+                  className="bg-charcoal-900 border border-red-900 hover:border-red-700 hover:bg-red-950/30 px-4 py-2 rounded-lg text-sm text-red-400 transition-all"
+                >
+                  <X size={16} className="inline mr-1" /> Reject
                 </button>
               </div>
             </div>
