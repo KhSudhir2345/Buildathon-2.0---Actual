@@ -3,8 +3,7 @@ import AvatarBadge from './AvatarBadge';
 import StatusDot from './StatusDot';
 import { MessageSquare, Star } from 'lucide-react';
 import axios from 'axios';
-
-const API_BASE = 'http://localhost:5000/api';
+import { API_BASE } from '../config/api';
 
 function RatingStars({ value, onChange }) {
   return (

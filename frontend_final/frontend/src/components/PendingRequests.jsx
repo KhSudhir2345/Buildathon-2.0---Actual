@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import AvatarBadge from './AvatarBadge';
 import { Check, X } from 'lucide-react';
 import axios from 'axios';
+import { API_BASE } from '../config/api';
 
 export default function PendingRequests({ currentUserId }) {
   const [requests, setRequests] = useState([]);
@@ -10,7 +11,7 @@ export default function PendingRequests({ currentUserId }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    axios.get(`http://localhost:5000/api/connections/pending/${currentUserId}`)
+    axios.get(`${API_BASE}/connections/pending/${currentUserId}`)
       .then(res => {
         setRequests(res.data);
         setLoading(false);
@@ -27,7 +28,7 @@ export default function PendingRequests({ currentUserId }) {
 
   const handleAccept = async (connectionId) => {
     try {
-      await axios.put(`http://localhost:5000/api/connections/accept/${connectionId}`);
+      await axios.put(`${API_BASE}/connections/accept/${connectionId}`);
       removeRequestFromList(connectionId);
       if (selected && selected._id === connectionId) {
         setModalOpen(false);
@@ -42,7 +43,7 @@ export default function PendingRequests({ currentUserId }) {
 
   const handleReject = async (connectionId) => {
     try {
-      await axios.put(`http://localhost:5000/api/connections/reject/${connectionId}`);
+      await axios.put(`${API_BASE}/connections/reject/${connectionId}`);
       removeRequestFromList(connectionId);
       if (selected && selected._id === connectionId) {
         setModalOpen(false);

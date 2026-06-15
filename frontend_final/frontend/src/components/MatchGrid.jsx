@@ -3,6 +3,7 @@ import LoadingSkeleton from './LoadingSkeleton';
 import AvatarBadge from './AvatarBadge';
 import { Heart, X } from 'lucide-react';
 import axios from 'axios';
+import { API_BASE } from '../config/api';
 
 export default function MatchGrid({ currentUserId, onViewProfile }) {
   const [users, setUsers] = useState([]);
@@ -35,7 +36,7 @@ export default function MatchGrid({ currentUserId, onViewProfile }) {
     setLoading(true);
     const params = skills.trim() ? { skills: skills.trim(), limit: 24 } : { limit: 24 };
 
-    axios.get('http://localhost:5000/api/profiles/discover', { params })
+    axios.get(`${API_BASE}/profiles/discover`, { params })
       .then(res => {
         const rankedUsers = res.data.profiles || [];
         setUsers(rankedUsers.filter(u => u._id !== currentUserId));
@@ -64,7 +65,7 @@ export default function MatchGrid({ currentUserId, onViewProfile }) {
     setSelectedProjectSkills([]);
 
     try {
-      const { data } = await axios.post('http://localhost:5000/api/skills/project-suggestions', {
+      const { data } = await axios.post(`${API_BASE}/skills/project-suggestions`, {
         description: projectDescription,
       });
       const skills = data.suggestedSkills || [];
@@ -98,7 +99,7 @@ export default function MatchGrid({ currentUserId, onViewProfile }) {
   const handleConnect = async (receiverId) => {
     try {
       // Fire the handshake logic we built in the backend
-      await axios.post('http://localhost:5000/api/connections/request', {
+      await axios.post(`${API_BASE}/connections/request`, {
         senderId: currentUserId,
         receiverId: receiverId
       });
