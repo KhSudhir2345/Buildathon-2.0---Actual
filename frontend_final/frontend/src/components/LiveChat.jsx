@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { io } from 'socket.io-client';
+import { API_BASE, API_ORIGIN } from '../config/api';
 
 // Connect to the backend exactly once per file load
-const socket = io('http://localhost:5000');
+const socket = io(API_ORIGIN);
 
 export default function LiveChat({ currentUserId, connectionId, onBack }) {
   const [messages, setMessages] = useState([]);
@@ -15,7 +16,7 @@ export default function LiveChat({ currentUserId, connectionId, onBack }) {
 
   useEffect(() => {
     // 1. Fetch chat history from the database
-    axios.get(`http://localhost:5000/api/messages/${connectionId}`)
+    axios.get(`${API_BASE}/messages/${connectionId}`)
       .then(res => {
         setMessages(res.data);
         setLoading(false);

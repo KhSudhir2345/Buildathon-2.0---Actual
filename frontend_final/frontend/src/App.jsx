@@ -7,8 +7,7 @@ import LiveChat from './components/LiveChat';
 import NetworkBackground from './components/NetworkBackground';
 import ProfileSetup from './components/ProfileSetup';
 import DeveloperProfile from './components/DeveloperProfile';
-
-const API_BASE = 'http://localhost:5000/api';
+import { API_BASE } from './config/api';
 
 export default function App() {
   // 1. Core State Management
@@ -109,7 +108,7 @@ export default function App() {
 
   const handleConnect = async (receiverId) => {
     try {
-      await axios.post('http://localhost:5000/api/connections/request', {
+      await axios.post(`${API_BASE}/connections/request`, {
         senderId: currentUserId,
         receiverId,
       });
