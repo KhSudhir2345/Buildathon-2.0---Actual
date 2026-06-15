@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const User = require('../models/User');
 const Connection = require('../models/Connection');
+const { expandSearchSkills, skillCategories } = require('../utils/skillCategories');
+const { findBestMatch } = require('../utils/fuzzyMatch');
 
 const cleanList = (values = []) => [
   ...new Set(values.map((value) => String(value).trim()).filter(Boolean)),
@@ -44,9 +46,15 @@ const skillMap = {
   'dl': 'deep learning',
 };
 
+const knownSkillAliases = Object.values(skillMap).map((value) => value.toLowerCase());
+const knownCategorySkills = Object.values(skillCategories).flatMap(({ skills }) => skills.map((skill) => skill.toLowerCase()));
+const knownSkills = Array.from(new Set([...knownSkillAliases, ...knownCategorySkills]));
+
 const normalizeSkill = (skill) => {
-  const normalized = skill.toLowerCase().trim();
-  return skillMap[normalized] || normalized;
+  const normalized = String(skill).toLowerCase().trim();
+  if (!normalized) return '';
+  const mapped = skillMap[normalized] || normalized;
+  return findBestMatch(mapped, knownSkills, 1);
 };
 
 exports.discoverProfiles = async (req, res) => {
@@ -57,10 +65,19 @@ exports.discoverProfiles = async (req, res) => {
     }
 
     const querySkills = req.query.skills
-      ? req.query.skills.split(',').map((skill) => skill.trim()).filter(Boolean).map(normalizeSkill)
+      ? req.query.skills
+          .split(',')
+          .map((skill) => skill.trim())
+          .filter(Boolean)
+          .map(normalizeSkill)
       : [];
+
     const matchSkills = cleanList(querySkills.length ? querySkills : (currentUser.lookingFor || []))
       .map((skill) => normalizeSkill(skill).toLowerCase());
+
+    const expandedSkills = matchSkills.length
+      ? cleanList(expandSearchSkills(matchSkills)).map((skill) => normalizeSkill(skill).toLowerCase())
+      : [];
 
     const limit = Math.min(parseInt(req.query.limit, 10) || 24, 50);
     const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
@@ -104,38 +121,29 @@ exports.discoverProfiles = async (req, res) => {
           {
             $addFields: {
               normalizedTechStack: {
-                $map: { 
-                  input: { $ifNull: ['$techStack', []] }, 
-                  as: 'skill', 
-                  in: { $toLower: { $arrayElemAt: [
-                    // Normalize: check if skill (lowercased) is in skillMap, if yes use mapped value, else use original
-                    [
-                      skillMap[{ $toLower: '$$skill' }] || { $toLower: '$$skill' }
-                    ], 
-                    0
-                  ]} } 
+                $map: {
+                  input: { $ifNull: ['$techStack', []] },
+                  as: 'skill',
+                  in: { $toLower: '$$skill' },
                 },
               },
               normalizedLookingFor: {
-                $map: { 
-                  input: { $ifNull: ['$lookingFor', []] }, 
-                  as: 'skill', 
-                  in: { $toLower: { $arrayElemAt: [
-                    [skillMap[{ $toLower: '$$skill' }] || { $toLower: '$$skill' }], 
-                    0
-                  ]} } 
+                $map: {
+                  input: { $ifNull: ['$lookingFor', []] },
+                  as: 'skill',
+                  in: { $toLower: '$$skill' },
                 },
               },
             },
           },
           {
             $addFields: {
-              matchScore: { $size: { $setIntersection: ['$normalizedTechStack', matchSkills] } },
-              mutualScore: { 
+              matchScore: { $size: { $setIntersection: ['$normalizedTechStack', expandedSkills] } },
+              mutualScore: {
                 $multiply: [
                   2,
-                  { $size: { $setIntersection: ['$normalizedLookingFor', currentUserSkills] } }
-                ] 
+                  { $size: { $setIntersection: ['$normalizedLookingFor', currentUserSkills] } },
+                ],
               },
               ratingScore: {
                 $multiply: [
