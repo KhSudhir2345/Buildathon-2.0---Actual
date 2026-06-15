@@ -123,68 +123,148 @@ export default function App() {
   // --- COMPONENT ROUTER ---
   const renderView = () => {
     switch (currentView) {
-    case 'login':
-      return (
-        <div className="flex flex-col items-center justify-center h-screen">
-          <div className="bg-charcoal-800/95 backdrop-blur-md p-8 rounded-2xl border border-charcoal-700 shadow-2xl w-96 card-hover relative">
-            {/* Glow effect background */}
-            <div className="absolute inset-0 bg-forest-400/5 rounded-2xl pointer-events-none" style={{filter: 'blur(20px)'}} />
-              <h2 className="text-forest-400 text-xl font-bold mb-6 text-center tracking-wide">
-                {authMode === 'login' ? 'SYSTEM ACCESS' : 'CREATE ACCESS'}
-              </h2>
-              <form onSubmit={handleAuth} className="flex flex-col gap-4">
-                {authMode === 'signup' && (
+      case 'login':
+        return (
+          <div className="flex flex-col items-center justify-center h-screen">
+            <div className="bg-charcoal-800/95 backdrop-blur-md p-8 rounded-2xl border border-charcoal-700 shadow-2xl w-96 card-hover relative overflow-hidden">
+              {/* Glow effect background */}
+              <div className="absolute inset-0 bg-forest-400/5 rounded-2xl pointer-events-none" style={{filter: 'blur(20px)'}} />
+              
+              {/* Decorative top accent */}
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-forest-400 to-transparent"></div>
+              
+              <div className="relative z-10 space-y-6">
+                {/* Creative Header */}
+                <div className="text-center space-y-3">
+                  <div className="flex items-center justify-center gap-2 text-2xl">
+                    <span className="text-forest-400">◆</span>
+                    <h2 className="text-forest-400 text-2xl font-black tracking-widest">DEV NEXUS</h2>
+                    <span className="text-forest-400">◆</span>
+                  </div>
+                  <p className="text-gray-400 text-sm tracking-wide font-mono">
+                    {authMode === 'login' ? 'CONNECT • BUILD • SHIP' : 'JOIN THE NETWORK'}
+                  </p>
+                </div>
+
+                {/* Creative Tagline */}
+                <div className="bg-gradient-to-r from-forest-900/20 to-transparent p-4 rounded-lg border border-forest-400/20">
+                  <p className="text-forest-300 text-sm font-semibold leading-relaxed text-center">
+                    {authMode === 'login' 
+                      ? ' Find Your Perfect Dev Squad. Build Epic Projects. Win Together.'
+                      : ' Join Thousands of Developers. Collaborate. Innovate. Succeed.'}
+                  </p>
+                </div>
+
+                {/* Divider */}
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 h-px bg-charcoal-600"></div>
+                  <span className="text-xs text-gray-500 uppercase tracking-widest font-mono">
+                    {authMode === 'login' ? 'Access' : 'Launch'}
+                  </span>
+                  <div className="flex-1 h-px bg-charcoal-600"></div>
+                </div>
+
+                {/* Form */}
+                <form onSubmit={handleAuth} className="flex flex-col gap-4">
+                  {authMode === 'signup' && (
+                    <input
+                      name="name"
+                      className="bg-charcoal-900 p-3 rounded-lg text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 focus:ring-1 focus:ring-forest-400/50 font-mono transition-all placeholder-gray-600"
+                      placeholder="Display name"
+                      required
+                    />
+                  )}
                   <input
-                    name="name"
-                    className="bg-charcoal-900 p-3 rounded-lg text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 focus:ring-1 focus:ring-forest-400/50 font-mono transition-all"
-                    placeholder="Display name"
+                    name="email"
+                    type="email"
+                    className="bg-charcoal-900 p-3 rounded-lg text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 focus:ring-1 focus:ring-forest-400/50 font-mono transition-all placeholder-gray-600"
+                    placeholder="Email"
                     required
                   />
-                )}
-                <input
-                  name="email"
-                  type="email"
-                  className="bg-charcoal-900 p-3 rounded-lg text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 focus:ring-1 focus:ring-forest-400/50 font-mono transition-all"
-                  placeholder="Email"
-                  required
-                />
-                <input
-                  name="password"
-                  type="password"
-                  minLength={6}
-                  className="bg-charcoal-900 p-3 rounded-lg text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 focus:ring-1 focus:ring-forest-400/50 font-mono transition-all"
-                  placeholder="Password"
-                  required
-                />
-                {authMode === 'signup' && (
-                  <>
-                    <input
-                      name="lookingFor"
-                      className="bg-charcoal-900 p-3 rounded-lg text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 focus:ring-1 focus:ring-forest-400/50 font-mono transition-all"
-                      placeholder="Looking for: React, ML, Backend"
-                    />
-                    <textarea
-                      name="bio"
-                      className="bg-charcoal-900 p-3 rounded text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 font-mono min-h-20 resize-none"
-                      placeholder="Short bio"
-                    />
-                  </>
-                )}
-                {authStatus && <div className="text-sm text-red-300 border border-red-900 bg-red-950/40 rounded px-3 py-2">{authStatus}</div>}
-                <button type="submit" disabled={authLoading} className="w-full bg-gradient-to-r from-forest-800 to-forest-900 hover:from-forest-700 hover:to-forest-800 disabled:opacity-50 px-4 py-3 rounded-lg text-white font-bold transition-all hover:shadow-lg hover:shadow-forest-400/20 disabled:cursor-not-allowed">
-                  {authLoading ? 'Authenticating...' : authMode === 'login' ? 'Initialize Session' : 'Create Account'}
+                  <input
+                    name="password"
+                    type="password"
+                    minLength={6}
+                    className="bg-charcoal-900 p-3 rounded-lg text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 focus:ring-1 focus:ring-forest-400/50 font-mono transition-all placeholder-gray-600"
+                    placeholder="Password"
+                    required
+                  />
+                  {authMode === 'signup' && (
+                    <>
+                      <input
+                        name="lookingFor"
+                        className="bg-charcoal-900 p-3 rounded-lg text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 focus:ring-1 focus:ring-forest-400/50 font-mono transition-all placeholder-gray-600"
+                        placeholder="Looking for: React, ML, Backend"
+                      />
+                      <textarea
+                        name="bio"
+                        className="bg-charcoal-900 p-3 rounded-lg text-gray-200 border border-charcoal-600 focus:outline-none focus:border-forest-400 font-mono min-h-20 resize-none placeholder-gray-600"
+                        placeholder="Tell us about yourself..."
+                      />
+                    </>
+                  )}
+                  {authStatus && (
+                    <div className="text-sm text-red-300 border border-red-900 bg-red-950/40 rounded px-3 py-2 font-mono">
+                      ⚠ {authStatus}
+                    </div>
+                  )}
+                  <button 
+                    type="submit" 
+                    disabled={authLoading} 
+                    className="w-full bg-gradient-to-r from-forest-800 to-forest-900 hover:from-forest-700 hover:to-forest-800 disabled:opacity-50 px-4 py-3 rounded-lg text-white font-bold transition-all hover:shadow-lg hover:shadow-forest-400/20 disabled:cursor-not-allowed uppercase tracking-wide"
+                  >
+                    {authLoading ? '⏳ Authenticating...' : authMode === 'login' ? '→ Enter Network' : '→ Create Account'}
+                  </button>
+                </form>
+
+                {/* Divider */}
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 h-px bg-charcoal-600"></div>
+                  <span className="text-xs text-gray-500 font-mono">OR</span>
+                  <div className="flex-1 h-px bg-charcoal-600"></div>
+                </div>
+
+                {/* Toggle Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthStatus(null);
+                    setAuthMode(authMode === 'login' ? 'signup' : 'login');
+                  }}
+                  className="w-full border border-charcoal-600 hover:border-forest-400 hover:bg-forest-900/10 px-4 py-3 rounded-lg text-gray-300 font-bold transition-all uppercase tracking-wide text-sm"
+                >
+                  {authMode === 'login' ? '+ Create New Account' : '← Back to Login'}
                 </button>
-              </form>
-              <button
-                type="button"
-                onClick={() => {
-                  setAuthStatus(null);
-                  setAuthMode(authMode === 'login' ? 'signup' : 'login');
-                }}
-                className="w-full mt-4 border border-charcoal-600 hover:border-forest-400 hover:bg-forest-900/10 px-4 py-3 rounded-lg text-gray-300 font-bold transition-all"
-              >
-                {authMode === 'login' ? 'Create Developer Account' : 'Use Existing Account'}
-              </button>
+
+                {/* Footer Info */}
+                <p className="text-center text-xs text-gray-600 font-mono">
+                  {authMode === 'login' 
+                    ? '✓ Secure • Anonymous • Lightning Fast'
+                    : '✓ Join 1000+ Developers • No Spam • Your Data is Safe'}
+                </p>
+              </div>
+
+              {/* Decorative bottom accent */}
+              <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-forest-400 to-transparent"></div>
+            </div>
+
+            {/* Side Info - Optional */}
+            <div className="mt-12 text-center max-w-md">
+              <h3 className="text-forest-400 font-bold text-lg mb-3">Why DevTinder?</h3>
+              <div className="grid grid-cols-3 gap-4 text-sm text-gray-400">
+                <div className="space-y-1">
+                  <p className="text-forest-300 font-bold">⚡ Fast</p>
+                  <p className="text-xs">Find matches instantly</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-forest-300 font-bold">🔥 Smart</p>
+                  <p className="text-xs">AI-powered matching</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-forest-300 font-bold">🚀 Real</p>
+                  <p className="text-xs">Real developers only</p>
+                </div>
+              </div>
             </div>
           </div>
         );
@@ -263,7 +343,7 @@ export default function App() {
                   onClick={() => setCurrentView('grid')} 
                   className={`font-semibold transition-all px-3 py-1 rounded-lg ${currentView === 'profile' ? 'text-white bg-forest-900 border border-forest-400 shadow-lg shadow-forest-400/20' : 'text-gray-400 hover:text-forest-400'}`}
                 >
-                  Discover
+                  Connect
                 </button>
                 <button 
                   onClick={() => setCurrentView('inbox')} 

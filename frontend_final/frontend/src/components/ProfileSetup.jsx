@@ -462,7 +462,7 @@ export default function ProfileSetup({ currentUserId, onComplete }) {
       <div className="bg-charcoal-800/95 border border-charcoal-700 rounded-xl overflow-hidden shadow-2xl backdrop-blur-sm">
         <div className="p-6 border-b border-charcoal-700">
           <h2 className="text-xl font-bold text-forest-400 tracking-wide">Developer Profile</h2>
-          <p className="text-gray-500 text-sm mt-1">Create your profile, extract skills, then enter discovery.</p>
+          <p className="text-gray-500 text-sm mt-1">Create your profile, extract skills, then connect.</p>
         </div>
 
         <form onSubmit={handleCreateUser} className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4 border-b border-charcoal-700">
@@ -555,7 +555,7 @@ export default function ProfileSetup({ currentUserId, onComplete }) {
                 {savingHighlights ? 'Saving highlights...' : 'Save highlights'}
               </button>
               <button type="button" onClick={() => onComplete(userId)} className="flex-1 bg-forest-900 hover:bg-forest-800 text-white text-sm font-bold px-4 py-3 rounded-lg">
-                Start discovering
+                Start Connecting
               </button>
             </div>
           </div>

@@ -72,7 +72,7 @@ export default function DeveloperProfile({ userId, currentUserId, onBack, onConn
       className="flex items-center gap-2 text-gray-400 hover:text-forest-400 text-sm font-semibold transition-colors group"
     >
       <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-      Back to discover
+      Back to Connect
     </button>
 
       <section className="bg-charcoal-800/95 border border-charcoal-700 rounded-xl p-6 backdrop-blur-sm shadow-xl">

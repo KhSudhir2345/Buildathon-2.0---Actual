@@ -117,7 +117,7 @@ export default function MatchGrid({ currentUserId, onViewProfile }) {
   return (
       <div className="space-y-6">
       <div className="bg-charcoal-800/80 backdrop-blur-sm border border-charcoal-700 rounded-xl p-6 card-hover shadow-lg">
-        <h2 className="text-2xl font-bold text-forest-400 mb-2">Discover Developers</h2>
+        <h2 className="text-2xl font-bold text-forest-400 mb-2">Connect with Developers</h2>
         <p className="text-gray-400 text-sm">Find your perfect team match</p>
       </div>
       <div className="bg-charcoal-800/80 backdrop-blur-sm border border-charcoal-700 rounded-xl p-6 space-y-4 card-hover shadow-lg">
